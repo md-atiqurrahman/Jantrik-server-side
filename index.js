@@ -19,6 +19,7 @@ async function run() {
         await client.connect();
 
         const toolCollection = client.db('jantrik').collection('tool');
+        const orderCollection = client.db('jantrik').collection('order');
 
         app.get('/tools', async (req, res) => {
             const tools = await toolCollection.find().toArray();
@@ -30,6 +31,19 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const tool = await toolCollection.findOne(query);
             res.send(tool);
+        })
+
+        app.post('/bookingOrder', async (req, res) =>{
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
+
+        app.get('/orders', async(req, res) =>{
+            const email = req.query.email;
+            const query = {userEmail: email};
+            const orders = await orderCollection.find(query).toArray();
+            res.send(orders);
         })
     }
 

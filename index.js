@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const app = express();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
 //middleware
@@ -20,6 +21,7 @@ async function run() {
 
         const toolCollection = client.db('jantrik').collection('tool');
         const orderCollection = client.db('jantrik').collection('order');
+        const paymentCollection = client.db('jantrik').collection('payments');
 
         app.get('/tools', async (req, res) => {
             const tools = await toolCollection.find().toArray();
@@ -58,6 +60,37 @@ async function run() {
             const query = {_id: ObjectId(orderId)};
             const order = await orderCollection.findOne(query);
             res.send(order);
+        })
+
+        app.post('/create-payment-intent', async (req, res) => {
+            const order = req.body;
+            const price = order.totalPrice;
+            const amount = price * 100;
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: 'usd',
+                payment_method_types: ['card']
+            })
+
+            res.send({ clientSecret: paymentIntent.client_secret })
+        });
+
+        app.patch('/orders/:id',  async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const query = {_id: ObjectId(id)};
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            }
+            const result = await paymentCollection.insertOne(payment);
+            const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
+            const order = await orderCollection.findOne(query);
+            res.send(updatedOrder);
         })
     }
 

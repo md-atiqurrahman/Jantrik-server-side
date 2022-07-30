@@ -22,6 +22,7 @@ async function run() {
         const toolCollection = client.db('jantrik').collection('tool');
         const orderCollection = client.db('jantrik').collection('order');
         const paymentCollection = client.db('jantrik').collection('payments');
+        const reviewCollection = client.db('jantrik').collection('review');
 
         app.get('/tools', async (req, res) => {
             const tools = await toolCollection.find().toArray();
@@ -91,6 +92,17 @@ async function run() {
             const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
             const order = await orderCollection.findOne(query);
             res.send(updatedOrder);
+        })
+
+        app.post('/review', async(req, res) =>{
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        })
+
+        app.get('/review', async (req, res) =>{
+            const reviews = await reviewCollection.find().toArray();
+            res.send(reviews);
         })
     }
 

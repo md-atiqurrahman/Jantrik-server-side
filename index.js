@@ -23,6 +23,7 @@ async function run() {
         const orderCollection = client.db('jantrik').collection('order');
         const paymentCollection = client.db('jantrik').collection('payments');
         const reviewCollection = client.db('jantrik').collection('review');
+        const userProfileCollection = client.db('jantrik').collection('profile');
 
         app.get('/tools', async (req, res) => {
             const tools = await toolCollection.find().toArray();
@@ -98,11 +99,17 @@ async function run() {
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
             res.send(result);
-        })
-
+        });
+        
         app.get('/review', async (req, res) =>{
             const reviews = await reviewCollection.find().toArray();
             res.send(reviews);
+        })
+
+        app.post('/userProfile', async(req, res) =>{
+            const userProfile = req.body;
+            const result = await userProfileCollection.insertOne(userProfile);
+            res.send(result)
         })
     }
 

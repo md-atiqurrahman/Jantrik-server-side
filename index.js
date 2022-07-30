@@ -37,29 +37,29 @@ async function run() {
             res.send(tool);
         })
 
-        app.post('/bookingOrder', async (req, res) =>{
+        app.post('/bookingOrder', async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
 
-        app.get('/orders', async(req, res) =>{
+        app.get('/orders', async (req, res) => {
             const email = req.query.email;
-            const query = {userEmail: email};
+            const query = { userEmail: email };
             const orders = await orderCollection.find(query).toArray();
             res.send(orders);
         });
 
-        app.delete('/orders/:id', async(req, res) =>{
+        app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
             res.send(result);
         })
 
-        app.get('/order/:id', async(req, res) =>{
+        app.get('/order/:id', async (req, res) => {
             const orderId = req.params.id;
-            const query = {_id: ObjectId(orderId)};
+            const query = { _id: ObjectId(orderId) };
             const order = await orderCollection.findOne(query);
             res.send(order);
         })
@@ -78,10 +78,10 @@ async function run() {
             res.send({ clientSecret: paymentIntent.client_secret })
         });
 
-        app.patch('/orders/:id',  async (req, res) => {
+        app.patch('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const payment = req.body;
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const filter = { _id: ObjectId(id) };
             const updatedDoc = {
                 $set: {
@@ -95,21 +95,34 @@ async function run() {
             res.send(updatedOrder);
         })
 
-        app.post('/review', async(req, res) =>{
+        app.post('/review', async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
             res.send(result);
         });
-        
-        app.get('/review', async (req, res) =>{
+
+        app.get('/review', async (req, res) => {
             const reviews = await reviewCollection.find().toArray();
             res.send(reviews);
         })
 
-        app.post('/userProfile', async(req, res) =>{
+        app.post('/userProfile', async (req, res) => {
             const userProfile = req.body;
             const result = await userProfileCollection.insertOne(userProfile);
             res.send(result)
+        })
+
+        app.put('/userProfile/:email', async (req, res) => {
+            const email = req.params.email;
+            const updateData = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: updateData
+              };
+            const result = await userProfileCollection.updateOne(filter,updateDoc,options);
+            res.send(result);
+
         })
     }
 

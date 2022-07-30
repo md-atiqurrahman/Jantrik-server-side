@@ -52,6 +52,13 @@ async function run() {
             const result = await orderCollection.deleteOne(query);
             res.send(result);
         })
+
+        app.get('/order/:id', async(req, res) =>{
+            const orderId = req.params.id;
+            const query = {_id: ObjectId(orderId)};
+            const order = await orderCollection.findOne(query);
+            res.send(order);
+        })
     }
 
     finally {

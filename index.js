@@ -24,6 +24,7 @@ async function run() {
         const paymentCollection = client.db('jantrik').collection('payments');
         const reviewCollection = client.db('jantrik').collection('review');
         const userProfileCollection = client.db('jantrik').collection('profile');
+        const userCollection = client.db('jantrik').collection('users');
 
         app.get('/tools', async (req, res) => {
             const tools = await toolCollection.find().toArray();
@@ -129,6 +130,18 @@ async function run() {
             const email = req.query.email;
             const query = {email: email};
             const result = await userProfileCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.put('/storeUsers/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            }
+            const result = await userCollection.updateOne(filter, updateDoc, options);
             res.send(result);
         })
     }

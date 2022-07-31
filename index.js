@@ -162,6 +162,12 @@ async function run() {
             res.send({ admin: isAdmin });
         })
 
+        app.post('/addProduct', async (req, res) =>{
+            const newProduct = req.body;
+            const result =  await toolCollection.insertOne(newProduct);
+            res.send(result);
+        })
+
         app.get('/users',  async (req, res) => {
             const users = await userCollection.find().toArray();
             res.send(users);

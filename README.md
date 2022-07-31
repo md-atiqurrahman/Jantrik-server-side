@@ -8,11 +8,10 @@ My website [Live link](https://jantrik-45dcd.web.app/)
 
   * Description of different features and functionality of Jantrik server side
 
-       * I use custom hooks for develope my website.
-       * I use firebase authentication system for login or sign-up
+       * I use CRUD operation in my server side for get,read,update,delete data.
+       * I host my server side in heroku.
        * It is a full-Stack website connected with mongodb as database.
        * I use JWT token to verify a user.
-       * I use optimized and compressed image in my website.
        * There are two types of access in my website.one is normal users access and another is admin type user access.
        * I implement credit card payment gateway in my website.
        * A list of technologies and library which are used in my server side.

@@ -16,6 +16,21 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: 'UnAuthorized access' });
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: 'Forbidden access' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+};
+
 async function run() {
     try {
         await client.connect();
@@ -27,46 +42,55 @@ async function run() {
         const userProfileCollection = client.db('jantrik').collection('profile');
         const userCollection = client.db('jantrik').collection('users');
 
+        const verifyAdmin = async (req, res, next) => {
+            const requester = req.decoded.email;
+            const requesterAccount = await userCollection.findOne({ email: requester })
+            if (requesterAccount.role !== 'admin') {
+                return res.status(403).send({ message: 'Forbidden access' })
+            }
+            next();
+        }
+
         app.get('/tools', async (req, res) => {
             const tools = await toolCollection.find().toArray();
             res.send(tools);
         })
 
-        app.get('/tools/:id', async (req, res) => {
+        app.get('/tools/:id',verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const tool = await toolCollection.findOne(query);
             res.send(tool);
         })
 
-        app.post('/bookingOrder', async (req, res) => {
+        app.post('/bookingOrder',verifyJWT, async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
 
-        app.get('/orders', async (req, res) => {
+        app.get('/orders',verifyJWT, async (req, res) => {
             const email = req.query.email;
             const query = { userEmail: email };
             const orders = await orderCollection.find(query).toArray();
             res.send(orders);
         });
 
-        app.delete('/orders/:id', async (req, res) => {
+        app.delete('/orders/:id',verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
             res.send(result);
         })
 
-        app.get('/order/:id', async (req, res) => {
+        app.get('/order/:id',verifyJWT, async (req, res) => {
             const orderId = req.params.id;
             const query = { _id: ObjectId(orderId) };
             const order = await orderCollection.findOne(query);
             res.send(order);
         })
 
-        app.post('/create-payment-intent', async (req, res) => {
+        app.post('/create-payment-intent',verifyJWT, async (req, res) => {
             const order = req.body;
             const price = order.totalPrice;
             const amount = price * 100;
@@ -80,7 +104,7 @@ async function run() {
             res.send({ clientSecret: paymentIntent.client_secret })
         });
 
-        app.patch('/orders/:id', async (req, res) => {
+        app.patch('/orders/:id',verifyJWT, async (req, res) => {
             const id = req.params.id;
             const payment = req.body;
             const query = { _id: ObjectId(id) };
@@ -97,7 +121,7 @@ async function run() {
             res.send(updatedOrder);
         })
 
-        app.post('/review', async (req, res) => {
+        app.post('/review',verifyJWT, async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
             res.send(result);
@@ -108,13 +132,13 @@ async function run() {
             res.send(reviews);
         })
 
-        app.post('/userProfile', async (req, res) => {
+        app.post('/userProfile',verifyJWT, async (req, res) => {
             const userProfile = req.body;
             const result = await userProfileCollection.insertOne(userProfile);
             res.send(result)
         })
 
-        app.put('/userProfile/:email', async (req, res) => {
+        app.put('/userProfile/:email',verifyJWT, async (req, res) => {
             const email = req.params.email;
             const updateData = req.body;
             const filter = { email: email };
@@ -127,7 +151,7 @@ async function run() {
 
         })
 
-        app.get('/userProfile' ,async(req, res) =>{
+        app.get('/userProfile' ,verifyJWT, async(req, res) =>{
             const email = req.query.email;
             const query = {email: email};
             const result = await userProfileCollection.findOne(query);
@@ -149,7 +173,7 @@ async function run() {
             res.send({ result, token });
         })
 
-        app.put('/users/admin/:email', async (req, res) => {
+        app.put('/users/admin/:email',verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
             const updateDoc = {
@@ -166,13 +190,13 @@ async function run() {
             res.send({ admin: isAdmin });
         })
 
-        app.post('/addProduct', async (req, res) =>{
+        app.post('/addProduct',verifyJWT, verifyAdmin, async (req, res) =>{
             const newProduct = req.body;
             const result =  await toolCollection.insertOne(newProduct);
             res.send(result);
         })
 
-        app.get('/users',  async (req, res) => {
+        app.get('/users',verifyJWT,verifyAdmin,  async (req, res) => {
             const users = await userCollection.find().toArray();
             res.send(users);
         })

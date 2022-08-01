@@ -215,6 +215,18 @@ async function run() {
             res.send(orders);
         })
 
+        app.patch('/allOrders/:id', verifyJWT,verifyAdmin, async(req, res) =>{
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)}
+            const updateDoc = {
+                $set: {
+                    deliveryStatus: true,
+                }
+            }
+            const result = await orderCollection.updateOne(filter,updateDoc);
+            res.send(result)
+        })
+
     }
 
     finally {

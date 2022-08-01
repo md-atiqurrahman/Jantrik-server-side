@@ -112,6 +112,7 @@ async function run() {
             const updatedDoc = {
                 $set: {
                     paid: true,
+                    deliveryStatus: false,
                     transactionId: payment.transactionId
                 }
             }

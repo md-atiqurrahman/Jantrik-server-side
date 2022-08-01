@@ -191,7 +191,7 @@ async function run() {
             return res.send(result);
         })
 
-        app.post('/addProduct', async (req, res) =>{
+        app.post('/addProduct',verifyJWT, verifyAdmin, async (req, res) =>{
             const newProduct = req.body;
             const result =  await toolCollection.insertOne(newProduct);
             res.send(result);
@@ -207,6 +207,11 @@ async function run() {
             const query =  {_id: ObjectId(toolId)};
             const result = await toolCollection.deleteOne(query);
             res.send(result);
+        })
+
+        app.get('/allOrders',verifyJWT,verifyAdmin, async(req, res) =>{
+            const orders = await orderCollection.find().toArray();
+            res.send(orders);
         })
 
     }

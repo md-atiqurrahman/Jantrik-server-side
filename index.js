@@ -173,6 +173,14 @@ async function run() {
             res.send({ result, token });
         })
 
+
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin });
+        })
+
         app.put('/users/admin/:email',verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
@@ -181,13 +189,6 @@ async function run() {
             }
             const result = await userCollection.updateOne(filter, updateDoc);
             return res.send(result);
-        })
-
-        app.get('/admin/:email', async (req, res) => {
-            const email = req.params.email;
-            const user = await userCollection.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
-            res.send({ admin: isAdmin });
         })
 
         app.post('/addProduct',verifyJWT, verifyAdmin, async (req, res) =>{
@@ -199,6 +200,13 @@ async function run() {
         app.get('/users',verifyJWT,verifyAdmin,  async (req, res) => {
             const users = await userCollection.find().toArray();
             res.send(users);
+        })
+
+        app.delete('/tool/:id',verifyJWT,verifyAdmin, async(req, res) =>{
+            const toolId = req.params.id;
+            const query =  {_id: ObjectId(toolId)};
+            const result = await toolCollection.deleteOne(query);
+            res.send(result);
         })
 
     }

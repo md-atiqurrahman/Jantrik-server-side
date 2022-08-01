@@ -191,7 +191,7 @@ async function run() {
             return res.send(result);
         })
 
-        app.post('/addProduct',verifyJWT, verifyAdmin, async (req, res) =>{
+        app.post('/addProduct', async (req, res) =>{
             const newProduct = req.body;
             const result =  await toolCollection.insertOne(newProduct);
             res.send(result);

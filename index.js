@@ -224,7 +224,14 @@ async function run() {
                 }
             }
             const result = await orderCollection.updateOne(filter,updateDoc);
-            res.send(result)
+            res.send(result);
+        });
+
+        app.delete('/allOrders/:id',verifyJWT,verifyAdmin,async(req, res) =>{
+             const id = req.params.id;
+             const query = {_id: ObjectId(id)};
+             const result = await orderCollection.deleteOne(query);
+             res.send(result);
         })
 
     }

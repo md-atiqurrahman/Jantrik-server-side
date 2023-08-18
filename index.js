@@ -33,7 +33,9 @@ function verifyJWT(req, res, next) {
 
 async function run() {
     try {
-        await client.connect();
+        // await client.connect();//If you want to fix this issue of deploy a node    server on vercel then you need to change 2 things.
+        //1. remove/comment- await client.connect()
+        //2. update all dependencies to the latest version
 
         const toolCollection = client.db('jantrik').collection('tool');
         const orderCollection = client.db('jantrik').collection('order');
@@ -56,41 +58,41 @@ async function run() {
             res.send(tools);
         })
 
-        app.get('/tools/:id',verifyJWT, async (req, res) => {
+        app.get('/tools/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const tool = await toolCollection.findOne(query);
             res.send(tool);
         })
 
-        app.post('/bookingOrder',verifyJWT, async (req, res) => {
+        app.post('/bookingOrder', verifyJWT, async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
 
-        app.get('/orders',verifyJWT, async (req, res) => {
+        app.get('/orders', verifyJWT, async (req, res) => {
             const email = req.query.email;
             const query = { userEmail: email };
             const orders = await orderCollection.find(query).toArray();
             res.send(orders);
         });
 
-        app.delete('/orders/:id',verifyJWT, async (req, res) => {
+        app.delete('/orders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
             res.send(result);
         })
 
-        app.get('/order/:id',verifyJWT, async (req, res) => {
+        app.get('/order/:id', verifyJWT, async (req, res) => {
             const orderId = req.params.id;
             const query = { _id: ObjectId(orderId) };
             const order = await orderCollection.findOne(query);
             res.send(order);
         })
 
-        app.post('/create-payment-intent',verifyJWT, async (req, res) => {
+        app.post('/create-payment-intent', verifyJWT, async (req, res) => {
             const order = req.body;
             const price = order.totalPrice;
             const amount = price * 100;
@@ -104,7 +106,7 @@ async function run() {
             res.send({ clientSecret: paymentIntent.client_secret })
         });
 
-        app.patch('/orders/:id',verifyJWT, async (req, res) => {
+        app.patch('/orders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const payment = req.body;
             const query = { _id: ObjectId(id) };
@@ -122,7 +124,7 @@ async function run() {
             res.send(updatedOrder);
         })
 
-        app.post('/review',verifyJWT, async (req, res) => {
+        app.post('/review', verifyJWT, async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
             res.send(result);
@@ -133,28 +135,28 @@ async function run() {
             res.send(reviews);
         })
 
-        app.post('/userProfile',verifyJWT, async (req, res) => {
+        app.post('/userProfile', verifyJWT, async (req, res) => {
             const userProfile = req.body;
             const result = await userProfileCollection.insertOne(userProfile);
             res.send(result)
         })
 
-        app.put('/userProfile/:email',verifyJWT, async (req, res) => {
+        app.put('/userProfile/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const updateData = req.body;
             const filter = { email: email };
             const options = { upsert: true };
             const updateDoc = {
                 $set: updateData
-              };
-            const result = await userProfileCollection.updateOne(filter,updateDoc,options);
+            };
+            const result = await userProfileCollection.updateOne(filter, updateDoc, options);
             res.send(result);
 
         })
 
-        app.get('/userProfile' ,verifyJWT, async(req, res) =>{
+        app.get('/userProfile', verifyJWT, async (req, res) => {
             const email = req.query.email;
-            const query = {email: email};
+            const query = { email: email };
             const result = await userProfileCollection.findOne(query);
             res.send(result);
         })
@@ -182,7 +184,7 @@ async function run() {
             res.send({ admin: isAdmin });
         })
 
-        app.put('/users/admin/:email',verifyJWT, verifyAdmin, async (req, res) => {
+        app.put('/users/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
             const updateDoc = {
@@ -192,46 +194,46 @@ async function run() {
             return res.send(result);
         })
 
-        app.post('/addProduct',verifyJWT, verifyAdmin, async (req, res) =>{
+        app.post('/addProduct', verifyJWT, verifyAdmin, async (req, res) => {
             const newProduct = req.body;
-            const result =  await toolCollection.insertOne(newProduct);
+            const result = await toolCollection.insertOne(newProduct);
             res.send(result);
         })
 
-        app.get('/users',verifyJWT,verifyAdmin,  async (req, res) => {
+        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
             const users = await userCollection.find().toArray();
             res.send(users);
         })
 
-        app.delete('/tool/:id',verifyJWT,verifyAdmin, async(req, res) =>{
+        app.delete('/tool/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const toolId = req.params.id;
-            const query =  {_id: ObjectId(toolId)};
+            const query = { _id: ObjectId(toolId) };
             const result = await toolCollection.deleteOne(query);
             res.send(result);
         })
 
-        app.get('/allOrders',verifyJWT,verifyAdmin, async(req, res) =>{
+        app.get('/allOrders', verifyJWT, verifyAdmin, async (req, res) => {
             const orders = await orderCollection.find().toArray();
             res.send(orders);
         })
 
-        app.patch('/allOrders/:id', verifyJWT,verifyAdmin, async(req, res) =>{
+        app.patch('/allOrders/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
-            const filter = {_id: ObjectId(id)}
+            const filter = { _id: ObjectId(id) }
             const updateDoc = {
                 $set: {
                     deliveryStatus: true,
                 }
             }
-            const result = await orderCollection.updateOne(filter,updateDoc);
+            const result = await orderCollection.updateOne(filter, updateDoc);
             res.send(result);
         });
 
-        app.delete('/allOrders/:id',verifyJWT,verifyAdmin,async(req, res) =>{
-             const id = req.params.id;
-             const query = {_id: ObjectId(id)};
-             const result = await orderCollection.deleteOne(query);
-             res.send(result);
+        app.delete('/allOrders/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
+            res.send(result);
         })
 
     }

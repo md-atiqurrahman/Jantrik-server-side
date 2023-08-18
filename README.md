@@ -50,7 +50,7 @@ Contributions to the project are welcome! If you have suggestions, bug reports, 
 Let's build a comprehensive platform for carpentry tools management together!
 
 ## License
-This project is not licensed under the MIT License. Feel free to use, modify, and distribute it in accordance with the terms of the license.
+This project is licensed under the MIT License. Feel free to use, modify, and distribute it in accordance with the terms of the license.
 
 For more details about the Carpentry Tools Manufacturer website and its development, visit our live website and explore the functionalities firsthand.
 

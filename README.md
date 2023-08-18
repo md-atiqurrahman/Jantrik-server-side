@@ -12,36 +12,36 @@ Explore our live website: [Live link](https://jantrik-45dcd.web.app/)
 
 The Jantrik server side is the backbone of our website, equipped with a range of features and functionalities:
 
-* 1. CRUD Operations: Utilize CRUD (Create, Read, Update, Delete) operations for seamless data management.
+* CRUD Operations: Utilize CRUD (Create, Read, Update, Delete) operations for seamless data management.
 
-* 2. Vercel Hosting: Our server side is hosted on the Vercel platform, ensuring reliable performance and accessibility.
+* Vercel Hosting: Our server side is hosted on the Vercel platform, ensuring reliable performance and accessibility.
 
-* 3. Full-Stack Connectivity: Jantrik is a full-stack website that employs MongoDB as its robust and scalable database.
+* Full-Stack Connectivity: Jantrik is a full-stack website that employs MongoDB as its robust and scalable database.
 
-* 4. JWT Authentication: JSON Web Tokens (JWT) are implemented for secure user verification and enhanced user experience.
+* JWT Authentication: JSON Web Tokens (JWT) are implemented for secure user verification and enhanced user experience.
 
-* 5. User Access Levels: The website offers both regular user access and admin user access for better user management.
+* User Access Levels: The website offers both regular user access and admin user access for better user management.
 
 
 
 ## Technologies and Libraries Used
 The Jantrik server side is powered by a set of technologies and libraries:
 
-* 1. Node.js: Core runtime for the server side application.
-* 2. Express.js: A powerful framework for developing API endpoints.
-* 3. jsonwebtoken: Facilitates secure user authentication with JSON Web Tokens.
-* 4. MongoDB: Chosen as the efficient database system for data storage and retrieval.
-* 5. stripe: Integration of Stripe enables seamless and secure credit card payments.
+* Node.js: Core runtime for the server side application.
+* Express.js: A powerful framework for developing API endpoints.
+* jsonwebtoken: Facilitates secure user authentication with JSON Web Tokens.
+* MongoDB: Chosen as the efficient database system for data storage and retrieval.
+* stripe: Integration of Stripe enables seamless and secure credit card payments.
 
 
 
 ## Installation and Usage
 To run the Carpentry Tools Manufacturer website locally, follow these steps:
 
-* 1. Clone this repository to your local machine.
-* 2. Navigate to the project directory using the command line.
-* 3. Install project dependencies using npm install.
-* 4. Start the server using npm start.
+* Clone this repository to your local machine.
+* Navigate to the project directory using the command line.
+* Install project dependencies using npm install.
+* Start the server using npm start.
 
 
 ## Contributions

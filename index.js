@@ -33,8 +33,8 @@ function verifyJWT(req, res, next) {
 
 async function run() {
     try {
-        await client.connect();//If you want to fix this issue of deploy a node    server on vercel then you need to change 2 things.
-        //1. remove/comment- await client.connect()
+        client.connect();//If you want to fix this issue of deploy a node    server on vercel then you need to change 2 things.
+        //1. remove/comment- await from client.connect()
         //2. update all dependencies to the latest version
 
         const toolCollection = client.db('jantrik').collection('tool');
